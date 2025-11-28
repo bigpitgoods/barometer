@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#000000">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="气压监测仪"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#64B5F6"
+        android:layout_marginBottom="50dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/sensor_background"
+        android:backgroundTint="#000000"
+        android:backgroundTintMode="src_in"
+        android:padding="30dp">
+
+        <TextView
+            android:id="@+id/pressureValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--"
+            android:textSize="55sp"
+            android:textColor="#FF7043"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="hPa"
+            android:textSize="20sp"
+            android:textColor="#B0BEC5"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/altitudeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="海拔: -- 米"
+        android:textSize="30sp"
+        android:textColor="#CFD8DC"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="正在监测气压..."
+        android:textSize="14sp"
+        android:textColor="#90A4AE"
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:id="@+id/stopServiceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="停止监测"
+        android:backgroundTint="#000000"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="40dp"/>
+
+</LinearLayout>
