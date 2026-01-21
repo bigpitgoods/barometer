@@ -21,6 +21,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import java.util.Locale
+import java.util.concurrent.atomic.AtomicReference
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,6 +29,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var altitudeValue: TextView
     private lateinit var statusText: TextView
     private lateinit var stopServiceButton: Button
+    private lateinit var decibelValue: TextView
+    private val latestDecibel = AtomicReference(0.0)
+    private val requestMicPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (!isGranted) {
+                Toast.makeText(this, "麦克风权限被拒绝，分贝将无法采集", Toast.LENGTH_LONG).show()
+            }
+        }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -43,7 +52,8 @@ class MainActivity : AppCompatActivity() {
             if (intent?.action == PressureMonitorService.ACTION_DATA_UPDATE) {
                 val pressure = intent.getFloatExtra(PressureMonitorService.EXTRA_PRESSURE, 0f)
                 val altitude = intent.getFloatExtra(PressureMonitorService.EXTRA_ALTITUDE, 0f)
-                updateUI(pressure, altitude)
+                val decibel = intent.getDoubleExtra(PressureMonitorService.EXTRA_DECIBEL, latestDecibel.get())
+                updateUI(pressure, altitude, decibel)
             }
         }
     }
@@ -73,6 +83,8 @@ class MainActivity : AppCompatActivity() {
         stopServiceButton.setOnClickListener {
             stopPressureService()
         }
+
+        // 分贝默认在后台服务中采集，无需按钮
     }
 
     override fun onResume() {
@@ -90,17 +102,25 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver(dataReceiver)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
     private fun initializeViews() {
         pressureValue = findViewById(R.id.pressureValue)
         altitudeValue = findViewById(R.id.altitudeValue)
         statusText = findViewById(R.id.statusText)
         stopServiceButton = findViewById(R.id.stopServiceButton)
+        decibelValue = findViewById(R.id.decibelValue)
         statusText.text = "服务已启动，正在后台监测..."
+        decibelValue.text = "分贝: -- dB"
     }
 
-    private fun updateUI(pressure: Float, altitude: Float) {
-        pressureValue.text = String.format(Locale.getDefault(), "%.2f", pressure)
+    private fun updateUI(pressure: Float, altitude: Float, decibel: Double) {
+        pressureValue.text = String.format(Locale.getDefault(), "气压: %.1f hPa", pressure)
         altitudeValue.text = String.format(Locale.getDefault(), "海拔: %.1f 米", altitude)
+        latestDecibel.set(decibel)
+        decibelValue.text = String.format(Locale.getDefault(), "分贝: %.1f dB", decibel)
     }
 
     private fun startPressureService() {
@@ -119,8 +139,9 @@ class MainActivity : AppCompatActivity() {
         startService(serviceIntent) // Send command to stop
         stopService(Intent(this, PressureMonitorService::class.java)) // Ensure service stops
         statusText.text = "监测已停止"
-        pressureValue.text = "--"
+        pressureValue.text = "气压: -- hPa"
         altitudeValue.text = "海拔: -- 米"
+        decibelValue.text = "分贝: -- dB"
     }
 
     private fun askNotificationPermission() {
@@ -130,13 +151,19 @@ class MainActivity : AppCompatActivity() {
             ) {
                 startPressureService()
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                // Consider showing a rationale UI
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         } else {
-            startPressureService() // No runtime permission needed below Android 13
+            startPressureService()
+        }
+
+        // Request microphone runtime permission for SPL capture
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            requestMicPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
     }
 }

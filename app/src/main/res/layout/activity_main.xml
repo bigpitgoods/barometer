@@ -7,43 +7,16 @@
     android:gravity="center"
     android:background="#000000">
 
+    <!-- 删除标题：气压监测仪 -->
+
     <TextView
+        android:id="@+id/pressureValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="气压监测仪"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="#64B5F6"
-        android:layout_marginBottom="50dp" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/sensor_background"
-        android:backgroundTint="#000000"
-        android:backgroundTintMode="src_in"
-        android:padding="30dp">
-
-        <TextView
-            android:id="@+id/pressureValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="--"
-            android:textSize="55sp"
-            android:textColor="#FF7043"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="hPa"
-            android:textSize="20sp"
-            android:textColor="#B0BEC5"
-            android:layout_marginTop="8dp" />
-
-    </LinearLayout>
+        android:text="气压: -- hPa"
+        android:textSize="30sp"
+        android:textColor="#FF7043"
+        android:layout_marginTop="12dp" />
 
     <TextView
         android:id="@+id/altitudeValue"
@@ -52,7 +25,18 @@
         android:text="海拔: -- 米"
         android:textSize="30sp"
         android:textColor="#CFD8DC"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="12dp" />
+
+    <TextView
+        android:id="@+id/decibelValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="分贝: -- dB"
+        android:textSize="30sp"
+        android:textColor="#FFEB3B"
+        android:layout_marginTop="12dp" />
+
+    <!-- 删除开始/停止分贝按钮，默认开启分贝测量 -->
 
     <TextView
         android:id="@+id/statusText"
